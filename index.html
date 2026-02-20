@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>⚡ GTM CHAT // CYBERPUNK MESSENGER v4.0</title>
+    <meta http-equiv="Permissions-Policy" content="microphone=(*), camera=(*)">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+        :root{
+            --neon-cyan:#00f0ff;--neon-pink:#ff0080;--neon-purple:#b400ff;
+            --neon-green:#00ff88;--neon-yellow:#ffe600;--neon-orange:#ff6b00;
+            --neon-red:#ff003c;--neon-blue:#0066ff;
+            --bg-black:#000008;--bg-dark:#06060f;--bg-card:#0a0a18;
+            --bg-card2:#0e0e22;--bg-input:#08081a;--bg-surface:rgba(10,10,24,0.95);
+            --text-primary:#d0d8f0;--text-secondary:#404868;--text-dim:#252840;
+            --msg-out:rgba(0,240,255,0.06);--msg-out-border:rgba(0,240,255,0.18);
+            --msg-in:rgba(180,0,255,0.06);--msg-in-border:rgba(180,0,255,0.18);
+            --danger:#ff0040;--glass:rgba(6,6,15,0.92);
+        }
+
+        html,body{
+            font-family:'Rajdhani',sans-serif;
+            background:var(--bg-black);color:var(--text-primary);
+            height:100%;overflow:hidden;
+        }
+
+        /* GRID OVERLAY */
+        body::before{
+            content:'';position:fixed;inset:0;
+            background:
+                linear-gradient(rgba(0,240,255,0.02) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(0,240,255,0.02) 1px,transparent 1px);
+            background-size:50px 50px;pointer-events:none;z-index:0;
+        }
+        body::after{
+            content:'';position:fixed;inset:0;
+            background:
+                radial-gradient(ellipse at 15% 15%,rgba(180,0,255,0.05),transparent 50%),
+                radial-gradient(ellipse at 85% 85%,rgba(0,240,255,0.04),transparent 50%),
+                radial-gradient(ellipse at 50% 50%,rgba(0,102,255,0.02),transparent 60%);
+            pointer-events:none;z-index:0;
+        }
+
+        .scanlines{
+            position:fixed;inset:0;
+            background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.08) 2px,rgba(0,0,0,0.08) 4px);
+            pointer-events:none;z-index:9998;opacity:0.4;
+        }
+
+        /* NEON HELPERS */
+        .nc{color:var(--neon-cyan);text-shadow:0 0 8px var(--neon-cyan),0 0 25px rgba(0,240,255,0.3)}
+        .np{color:var(--neon-pink);text-shadow:0 0 8px var(--neon-pink),0 0 25px rgba(255,0,128,0.3)}
+        .ng{color:var(--neon-green);text-shadow:0 0 8px var(--neon-green),0 0 25px rgba(0,255,136,0.3)}
+        .nv{color:var(--neon-purple);text-shadow:0 0 8px var(--neon-purple),0 0 25px rgba(180,0,255,0.3)}
+        .ny{color:var(--neon-yellow);text-shadow:0 0 8px var(--neon-yellow)}
+
+        /* KEYFRAMES */
+        @keyframes glitch{0%,100%{opacity:1}20%{opacity:.8;text-shadow:-2px 0 var(--neon-pink),2px 0 var(--neon-cyan)}40%{opacity:1}60%{opacity:.9;text-shadow:1px 0 var(--neon-pink),-1px 0 var(--neon-cyan)}80%{opacity:1}}
+        @keyframes borderGlow{0%,100%{border-color:rgba(0,240,255,0.15);box-shadow:0 0 15px rgba(0,240,255,0.03)}50%{border-color:rgba(0,240,255,0.4);box-shadow:0 0 30px rgba(0,240,255,0.08)}}
+        @keyframes hexBreathe{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.04);opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+        @keyframes particleFloat{0%{transform:translateY(100vh) rotate(0);opacity:0}10%{opacity:1}90%{opacity:.6}100%{transform:translateY(-10vh) rotate(360deg);opacity:0}}
+        @keyframes msgSlide{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        @keyframes dotBounce{0%,60%,100%{transform:translateY(0);opacity:.3}30%{transform:translateY(-6px);opacity:1}}
+        @keyframes recPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,0,64,0.4)}50%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(255,0,64,0)}}
+        @keyframes popDown{from{opacity:0;transform:translateX(-50%) translateY(-25px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        @keyframes toastSlide{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        @keyframes waveform{0%,100%{height:4px}25%{height:16px}50%{height:8px}75%{height:20px}}
+        @keyframes transmissionPulse{0%{box-shadow:0 0 0 0 rgba(0,240,255,0.4),0 0 40px rgba(0,240,255,0.1)}50%{box-shadow:0 0 0 25px rgba(0,240,255,0),0 0 80px rgba(0,240,255,0.2)}100%{box-shadow:0 0 0 0 rgba(0,240,255,0),0 0 40px rgba(0,240,255,0.1)}}
+        @keyframes orbitalRing{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}
+        @keyframes dataStream{0%{background-position:0 0}100%{background-position:0 -200px}}
+        @keyframes signalWave{0%,100%{opacity:.3;transform:scaleY(.5)}50%{opacity:1;transform:scaleY(1)}}
+
+        /* SCREENS */
+        .screen{display:none;height:100%;position:relative;z-index:1}
+        .screen.active{display:flex}
+
+        /* ===== LOGIN ===== */
+        .login-screen{justify-content:center;align-items:center;overflow:hidden}
+
+        .particles{position:absolute;inset:0;overflow:hidden;z-index:0}
+        .particle{
+            position:absolute;width:2px;height:2px;border-radius:50%;
+            animation:particleFloat linear infinite;
+        }
+        .particle.cyan{background:var(--neon-cyan);box-shadow:0 0 6px var(--neon-cyan)}
+        .particle.purple{background:var(--neon-purple);box-shadow:0 0 6px var(--neon-purple)}
+        .particle.pink{background:var(--neon-pink);box-shadow:0 0 4px var(--neon-pink)}
+
+        .login-box{
+            background:var(--glass);backdrop-filter:blur(25px);
+            border:1px solid rgba(0,240,255,0.1);
+            padding:36px 30px;text-align:center;
+            max-width:400px;width:92%;z-index:2;
+            animation:slideUp 0.7s ease;position:relative;
+            clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));
+        }
+        .login-box::before{
+            content:'';position:absolute;inset:-1px;
+            background:linear-gradient(135deg,rgba(0,240,255,0.25),transparent 40%,transparent 60%,rgba(180,0,255,0.25));
+            clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));
+            z-index:-1;animation:borderGlow 4s infinite;
+        }
+
+        .corner{position:absolute;width:14px;height:14px}
+        .corner.tl{top:6px;left:6px;border-top:2px solid var(--neon-cyan);border-left:2px solid var(--neon-cyan)}
+        .corner.tr{top:6px;right:6px;border-top:2px solid var(--neon-pink);border-right:2px solid var(--neon-pink)}
+        .corner.bl{bottom:6px;left:6px;border-bottom:2px solid var(--neon-purple);border-left:2px solid var(--neon-purple)}
+        .corner.br{bottom:6px;right:6px;border-bottom:2px solid var(--neon-green);border-right:2px solid var(--neon-green)}
+
+        .logo-wrap{width:82px;height:82px;margin:0 auto 14px;position:relative}
+        .hex-logo{
+            width:82px;height:82px;
+            background:linear-gradient(135deg,rgba(0,240,255,0.12),rgba(180,0,255,0.12));
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            display:flex;align-items:center;justify-content:center;
+            font-size:30px;animation:hexBreathe 3s infinite ease-in-out;position:relative;
+        }
+        .hex-logo::before{
+            content:'';position:absolute;inset:-2px;
+            background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple),var(--neon-pink));
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            z-index:-1;opacity:.5;
+        }
+        .hex-logo .logo-icon{font-size:28px;filter:drop-shadow(0 0 10px var(--neon-cyan))}
+
+        .login-box h1{
+            font-family:'Orbitron',monospace;font-size:26px;font-weight:900;
+            letter-spacing:5px;margin-bottom:2px;
+            background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple),var(--neon-pink));
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            background-clip:text;
+            animation:glitch 6s infinite;
+        }
+        .login-subtitle{font-family:'Share Tech Mono',monospace;color:var(--neon-cyan);font-size:9px;letter-spacing:8px;text-transform:uppercase;opacity:.6;margin-bottom:5px}
+        .login-box>p{color:var(--text-secondary);font-size:12px;margin-bottom:24px;font-family:'Share Tech Mono',monospace}
+        .version-tag{display:inline-block;padding:2px 10px;border:1px solid rgba(0,255,136,0.25);font-size:9px;color:var(--neon-green);font-family:'Share Tech Mono',monospace;margin-bottom:18px;letter-spacing:1px}
+
+        .input-grp{margin-bottom:14px;text-align:left}
+        .input-grp label{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--neon-cyan);margin-bottom:5px;font-family:'Share Tech Mono',monospace;text-transform:uppercase;letter-spacing:2px;opacity:.8}
+        .input-grp label i{font-size:9px}
+
+        .cy-input{
+            width:100%;padding:12px 15px;
+            border:1px solid rgba(0,240,255,0.1);
+            background:rgba(0,240,255,0.02);
+            color:var(--neon-cyan);font-size:15px;
+            font-family:'Share Tech Mono',monospace;
+            outline:none;transition:all 0.3s;
+            clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+        }
+        .cy-input:focus{border-color:var(--neon-cyan);box-shadow:0 0 25px rgba(0,240,255,0.08);background:rgba(0,240,255,0.05)}
+        .cy-input::placeholder{color:rgba(0,240,255,0.2)}
+
+        .login-btn{
+            width:100%;padding:14px;border:1px solid var(--neon-cyan);
+            background:linear-gradient(135deg,rgba(0,240,255,0.08),rgba(180,0,255,0.08));
+            color:var(--neon-cyan);font-size:13px;font-weight:700;
+            cursor:pointer;font-family:'Orbitron',monospace;
+            margin-top:8px;letter-spacing:3px;text-transform:uppercase;
+            transition:all 0.3s;position:relative;overflow:hidden;
+            clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+        }
+        .login-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,240,255,0.15),transparent);transition:left 0.5s}
+        .login-btn:hover::before{left:100%}
+        .login-btn:hover{background:linear-gradient(135deg,rgba(0,240,255,0.15),rgba(180,0,255,0.15));box-shadow:0 0 35px rgba(0,240,255,0.15);transform:translateY(-1px)}
+        .login-btn:active{transform:scale(.98)}
+
+        .sys-info{margin-top:18px;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-secondary);line-height:2}
+        .https-warn{margin-top:14px;padding:10px;background:rgba(255,0,64,0.06);border:1px solid rgba(255,0,64,0.15);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--danger);line-height:1.8;text-align:left;display:none}
+        .https-warn.show{display:block}
+
+        /* ===== APP ===== */
+        .app-screen{flex-direction:column}
+
+        .app-hdr{
+            padding:10px 14px;display:flex;align-items:center;
+            justify-content:space-between;
+            background:var(--glass);
+            border-bottom:1px solid rgba(0,240,255,0.08);z-index:10;
+        }
+        .brand{display:flex;align-items:center;gap:10px}
+        .brand-hex{width:34px;height:34px;background:linear-gradient(135deg,rgba(0,240,255,0.15),rgba(180,0,255,0.15));clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:13px}
+        .brand-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:800;letter-spacing:3px}
+        .user-tag{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--neon-green);letter-spacing:1px}
+
+        .hdr-btns{display:flex;gap:5px}
+        .hdr-btn{
+            width:34px;height:34px;
+            border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);
+            color:var(--text-secondary);font-size:13px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;transition:all 0.3s;
+            clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));
+        }
+        .hdr-btn:hover{border-color:var(--neon-cyan);color:var(--neon-cyan);background:rgba(0,240,255,0.06)}
+        .hdr-btn.mic-ok{border-color:var(--neon-green);color:var(--neon-green)}
+        .hdr-btn.mic-no{border-color:var(--danger);color:var(--danger);animation:borderGlow 1.5s infinite}
+
+        .tabs{display:flex;background:rgba(4,4,10,0.9);border-bottom:1px solid rgba(0,240,255,0.06)}
+        .tabs button{
+            flex:1;padding:11px;border:none;background:none;
+            color:var(--text-secondary);font-size:10px;font-weight:700;
+            cursor:pointer;font-family:'Orbitron',monospace;letter-spacing:1px;
+            transition:all 0.3s;border-bottom:2px solid transparent;
+            display:flex;align-items:center;justify-content:center;gap:7px;text-transform:uppercase;
+        }
+        .tabs button.active{color:var(--neon-cyan);border-bottom-color:var(--neon-cyan);background:rgba(0,240,255,0.02);text-shadow:0 0 12px rgba(0,240,255,0.4)}
+        .tabs button i{font-size:13px}
+
+        .tab-panel{flex:1;overflow:hidden;display:none;flex-direction:column;z-index:1}
+        .tab-panel.active{display:flex}
+
+        /* SESSION BOX */
+        .session-box{
+            margin:10px;padding:16px;
+            background:rgba(0,240,255,0.02);
+            border:1px solid rgba(0,240,255,0.08);
+            clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));
+            position:relative;
+        }
+        .session-box::after{content:'SESSION ACTIVE';position:absolute;top:5px;right:18px;font-family:'Share Tech Mono',monospace;font-size:7px;color:var(--neon-green);letter-spacing:2px;animation:blink 2.5s infinite}
+        .sess-label{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+        .sess-id{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--neon-cyan);word-break:break-all;line-height:1.6;padding:8px;background:rgba(0,0,0,0.4);border:1px solid rgba(0,240,255,0.06);margin-bottom:8px;user-select:all}
+        .sess-btns{display:flex;gap:6px;flex-wrap:wrap}
+
+        .cy-btn-sm{
+            padding:7px 14px;
+            border:1px solid rgba(0,240,255,0.15);background:rgba(0,240,255,0.03);
+            color:var(--neon-cyan);font-size:10px;
+            font-family:'Share Tech Mono',monospace;cursor:pointer;
+            transition:all 0.3s;letter-spacing:1px;display:flex;align-items:center;gap:5px;
+        }
+        .cy-btn-sm:hover{background:rgba(0,240,255,0.1);box-shadow:0 0 12px rgba(0,240,255,0.08)}
+        .cy-btn-sm.pink{border-color:rgba(255,0,128,0.15);background:rgba(255,0,128,0.03);color:var(--neon-pink)}
+        .cy-btn-sm.pink:hover{background:rgba(255,0,128,0.1)}
+        .cy-btn-sm.green{border-color:rgba(0,255,136,0.15);background:rgba(0,255,136,0.03);color:var(--neon-green)}
+        .cy-btn-sm.green:hover{background:rgba(0,255,136,0.1)}
+
+        /* QR */
+        .qr-box{margin:0 10px 10px;padding:14px;background:rgba(180,0,255,0.02);border:1px solid rgba(180,0,255,0.08);text-align:center;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+        .qr-title{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--neon-purple);letter-spacing:2px;margin-bottom:8px;text-transform:uppercase}
+        .qr-wrap{display:inline-block;padding:8px;background:#fff;border-radius:3px;margin-bottom:8px}
+        #qrCanvas{display:block}
+        .qr-box video{width:100%;max-width:240px;border:2px solid var(--neon-purple);display:none;margin:8px auto 0}
+
+        /* CONNECT */
+        .conn-box{padding:10px;display:flex;gap:6px}
+        .conn-box .cy-input{flex:1;font-size:12px;padding:10px 12px}
+        .conn-btn{
+            padding:10px 16px;border:1px solid var(--neon-green);
+            background:linear-gradient(135deg,rgba(0,255,136,0.06),rgba(0,240,255,0.06));
+            color:var(--neon-green);font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+            cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:all 0.3s;
+            clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));
+        }
+        .conn-btn:hover{background:rgba(0,255,136,0.12);box-shadow:0 0 20px rgba(0,255,136,0.1)}
+
+        /* PEERS */
+        .peers{flex:1;overflow-y:auto;padding:6px}
+        .peers::-webkit-scrollbar{width:2px}
+        .peers::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.15)}
+
+        .peer-card{
+            display:flex;align-items:center;gap:11px;padding:12px 14px;
+            margin-bottom:5px;cursor:pointer;transition:all 0.3s;
+            background:rgba(0,240,255,0.015);
+            border:1px solid rgba(0,240,255,0.04);
+            clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+        }
+        .peer-card:hover{background:rgba(0,240,255,0.04);border-color:rgba(0,240,255,0.12)}
+        .peer-card.active{background:rgba(0,240,255,0.06);border-color:rgba(0,240,255,0.25)}
+
+        .peer-hex{
+            width:42px;height:42px;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            display:flex;align-items:center;justify-content:center;
+            font-size:15px;font-weight:800;color:white;flex-shrink:0;font-family:'Orbitron',monospace;
+        }
+        .peer-info{flex:1;min-width:0}
+        .peer-info h4{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .peer-info p{font-size:10px;color:var(--text-secondary);font-family:'Share Tech Mono',monospace}
+        .dot-on{width:7px;height:7px;background:var(--neon-green);box-shadow:0 0 6px var(--neon-green);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0}
+        .dot-off{width:7px;height:7px;background:var(--text-secondary);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);flex-shrink:0}
+        .unread-badge{
+            background:var(--neon-pink);color:white;font-size:9px;font-weight:800;
+            min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            font-family:'Orbitron',monospace;box-shadow:0 0 8px rgba(255,0,128,0.4);flex-shrink:0;
+        }
+        .peer-card .act-btn{
+            width:32px;height:32px;border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);
+            color:var(--text-secondary);font-size:12px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            transition:all 0.3s;flex-shrink:0;
+        }
+        .peer-card .act-btn:hover{background:rgba(0,240,255,0.08);color:var(--neon-cyan)}
+
+        .empty-st{text-align:center;padding:35px 20px;color:var(--text-dim);font-family:'Share Tech Mono',monospace}
+        .empty-st i{font-size:36px;margin-bottom:12px;display:block;opacity:.2}
+        .empty-st p{font-size:11px;line-height:2;color:var(--text-secondary)}
+
+        /* ===== CHAT ===== */
+        .chat-view{display:none;flex-direction:column;flex:1}
+        .chat-view.active{display:flex}
+
+        .ch-hdr{
+            padding:9px 12px;display:flex;align-items:center;gap:10px;
+            background:var(--glass);border-bottom:1px solid rgba(0,240,255,0.06);
+        }
+        .ch-back{width:32px;height:32px;border:1px solid rgba(0,240,255,0.08);background:none;color:var(--neon-cyan);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .ch-hex{width:36px;height:36px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:white;font-family:'Orbitron',monospace}
+        .ch-info{flex:1}
+        .ch-info h3{font-size:13px;font-weight:600}
+        .ch-info p{font-size:9px;color:var(--neon-green);font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+        .ch-acts{display:flex;gap:5px}
+        .ch-acts button{
+            width:36px;height:36px;border:1px solid rgba(0,240,255,0.08);
+            background:rgba(0,240,255,0.02);color:var(--text-secondary);font-size:14px;
+            cursor:pointer;display:flex;align-items:center;justify-content:center;
+            clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));
+            transition:all 0.3s;
+        }
+        .ch-acts button:hover{background:rgba(0,240,255,0.06);color:var(--neon-cyan)}
+
+        .msg-area{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:5px}
+        .msg-area::-webkit-scrollbar{width:2px}
+        .msg-area::-webkit-scrollbar-thumb{background:rgba(0,240,255,0.12)}
+
+        .msg{max-width:82%;padding:9px 13px;position:relative;animation:msgSlide 0.3s ease;word-wrap:break-word}
+        .msg.sent{align-self:flex-end;background:var(--msg-out);border:1px solid var(--msg-out-border);clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%)}
+        .msg.received{align-self:flex-start;background:var(--msg-in);border:1px solid var(--msg-in-border);clip-path:polygon(0 0,100% 0,100% 100%,8px 100%,0 calc(100% - 8px))}
+        .msg .m-text{font-size:13px;line-height:1.5}
+        .msg .m-time{font-size:8px;color:var(--text-secondary);text-align:right;margin-top:3px;font-family:'Share Tech Mono',monospace;display:flex;align-items:center;justify-content:flex-end;gap:4px}
+        .msg .m-img{max-width:100%;margin-bottom:5px;cursor:pointer;max-height:260px;object-fit:cover;border:1px solid rgba(0,240,255,0.08)}
+        .msg audio{width:100%;min-width:170px;height:32px;margin-bottom:3px;filter:hue-rotate(180deg) saturate(1.5)}
+
+        .typing-ind{
+            align-self:flex-start;padding:8px 14px;
+            background:var(--msg-in);border:1px solid var(--msg-in-border);
+            display:none;gap:4px;
+        }
+        .typing-ind.active{display:flex}
+        .typing-ind span{width:5px;height:5px;background:var(--neon-purple);border-radius:50%;animation:dotBounce 1.4s infinite;box-shadow:0 0 5px var(--neon-purple)}
+        .typing-ind span:nth-child(2){animation-delay:.2s}
+        .typing-ind span:nth-child(3){animation-delay:.4s}
+
+        .in-bar{
+            padding:8px 10px;display:flex;align-items:flex-end;gap:6px;
+            background:rgba(4,4,10,0.95);border-top:1px solid rgba(0,240,255,0.06);
+        }
+        .att-btns{display:flex;gap:3px}
+        .att-btns button{
+            width:36px;height:36px;
+            border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);
+            color:var(--text-secondary);font-size:14px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;transition:all 0.3s;
+        }
+        .att-btns button:hover{background:rgba(0,240,255,0.06);color:var(--neon-cyan)}
+        .att-btns button.recording{background:rgba(255,0,64,0.12)!important;border-color:var(--danger)!important;color:var(--danger)!important;animation:recPulse 1.2s infinite}
+        .in-wrap{flex:1}
+        .in-wrap textarea{
+            width:100%;padding:10px 12px;
+            border:1px solid rgba(0,240,255,0.08);background:rgba(0,240,255,0.02);
+            color:var(--neon-cyan);font-size:13px;
+            font-family:'Share Tech Mono',monospace;resize:none;outline:none;
+            max-height:90px;min-height:38px;line-height:1.4;transition:border-color 0.3s;
+        }
+        .in-wrap textarea:focus{border-color:var(--neon-cyan);box-shadow:0 0 12px rgba(0,240,255,0.04)}
+        .in-wrap textarea::placeholder{color:rgba(0,240,255,0.15)}
+        .send-hex{
+            width:40px;height:40px;border:1px solid var(--neon-cyan);
+            background:linear-gradient(135deg,rgba(0,240,255,0.1),rgba(180,0,255,0.1));
+            color:var(--neon-cyan);font-size:14px;cursor:pointer;flex-shrink:0;
+            display:flex;align-items:center;justify-content:center;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            transition:all 0.3s;
+        }
+        .send-hex:hover{background:rgba(0,240,255,0.2);box-shadow:0 0 18px rgba(0,240,255,0.15)}
+        .rec-ind{display:none;align-items:center;gap:6px;color:var(--danger);font-size:11px;font-family:'Share Tech Mono',monospace}
+        .rec-ind.active{display:flex}
+        .rec-dot{width:7px;height:7px;background:var(--danger);border-radius:50%;animation:blink 1s infinite;box-shadow:0 0 6px var(--danger)}
+
+        /* ===== CALL SCREEN - AUDIO TRANSMISSION SCI-FI ===== */
+        .call-screen{
+            display:none;position:fixed;inset:0;
+            background:var(--bg-black);z-index:999;
+            flex-direction:column;align-items:center;justify-content:center;
+            overflow:hidden;
+        }
+        .call-screen.active{display:flex;animation:fadeIn 0.4s ease}
+
+        .call-bg{position:absolute;inset:0;z-index:0;overflow:hidden}
+
+        /* Orbital rings */
+        .orbital{
+            position:absolute;top:50%;left:50%;
+            border:1px solid rgba(0,240,255,0.08);
+            border-radius:50%;
+            animation:orbitalRing linear infinite;
+        }
+        .orbital:nth-child(1){width:300px;height:300px;margin:-150px 0 0 -150px;animation-duration:12s;border-color:rgba(0,240,255,0.06)}
+        .orbital:nth-child(2){width:420px;height:420px;margin:-210px 0 0 -210px;animation-duration:18s;animation-direction:reverse;border-color:rgba(180,0,255,0.05)}
+        .orbital:nth-child(3){width:550px;height:550px;margin:-275px 0 0 -275px;animation-duration:25s;border-color:rgba(255,0,128,0.04)}
+
+        /* Data streams */
+        .data-stream{
+            position:absolute;width:1px;height:100%;
+            background:repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(0,240,255,0.1) 10px,rgba(0,240,255,0.1) 12px);
+            animation:dataStream 3s linear infinite;opacity:.3;
+        }
+
+        .call-content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+
+        /* Transmission label */
+        .transmission-label{
+            font-family:'Orbitron',monospace;font-size:9px;
+            letter-spacing:6px;color:var(--neon-cyan);
+            margin-bottom:25px;opacity:.7;
+            text-transform:uppercase;
+        }
+        .transmission-label .blinker{animation:blink 1s infinite}
+
+        .call-avatar{
+            width:120px;height:120px;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            display:flex;align-items:center;justify-content:center;
+            font-size:42px;font-weight:900;color:white;font-family:'Orbitron',monospace;
+            margin-bottom:18px;position:relative;z-index:1;
+            animation:transmissionPulse 2.5s infinite ease-in-out;
+        }
+        .call-avatar::before{
+            content:'';position:absolute;inset:-3px;
+            background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple),var(--neon-pink));
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            z-index:-1;
+        }
+
+        /* Waveform visualizer */
+        .waveform{
+            display:flex;align-items:center;justify-content:center;
+            gap:3px;height:30px;margin-bottom:20px;
+        }
+        .waveform .bar{
+            width:3px;background:var(--neon-cyan);border-radius:2px;
+            animation:signalWave 0.8s ease-in-out infinite;
+            box-shadow:0 0 4px var(--neon-cyan);
+        }
+        .waveform .bar:nth-child(1){animation-delay:0;height:8px}
+        .waveform .bar:nth-child(2){animation-delay:.1s;height:14px}
+        .waveform .bar:nth-child(3){animation-delay:.2s;height:20px}
+        .waveform .bar:nth-child(4){animation-delay:.15s;height:12px}
+        .waveform .bar:nth-child(5){animation-delay:.3s;height:24px}
+        .waveform .bar:nth-child(6){animation-delay:.1s;height:16px}
+        .waveform .bar:nth-child(7){animation-delay:.25s;height:10px}
+        .waveform .bar:nth-child(8){animation-delay:.05s;height:18px}
+        .waveform .bar:nth-child(9){animation-delay:.35s;height:6px}
+        .waveform .bar:nth-child(10){animation-delay:.2s;height:22px}
+        .waveform .bar:nth-child(11){animation-delay:.15s;height:14px}
+        .waveform .bar:nth-child(12){animation-delay:.3s;height:8px}
+        .waveform.idle .bar{animation:none;height:3px!important;opacity:.3}
+
+        .call-screen h2{font-family:'Orbitron',monospace;font-size:16px;letter-spacing:3px;z-index:1;margin-bottom:4px}
+        .call-status{color:var(--neon-cyan);font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:2px;z-index:1;margin-bottom:6px}
+        .call-timer{font-size:42px;font-weight:300;font-family:'Share Tech Mono',monospace;color:var(--neon-cyan);text-shadow:0 0 25px rgba(0,240,255,0.4);z-index:1;margin-bottom:6px;letter-spacing:3px}
+
+        /* Signal strength indicator */
+        .signal-bars{display:flex;gap:2px;align-items:flex-end;margin-bottom:35px;z-index:1}
+        .signal-bars .bar{width:4px;background:var(--neon-green);border-radius:1px}
+        .signal-bars .bar:nth-child(1){height:5px}
+        .signal-bars .bar:nth-child(2){height:9px}
+        .signal-bars .bar:nth-child(3){height:13px}
+        .signal-bars .bar:nth-child(4){height:17px}
+        .signal-bars .bar:nth-child(5){height:21px}
+        .signal-bars.weak .bar:nth-child(4),.signal-bars.weak .bar:nth-child(5){background:var(--text-dim)}
+
+        .call-btns{display:flex;gap:18px;z-index:1}
+        .call-btns button{
+            width:54px;height:54px;border:none;font-size:18px;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;
+            clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+            transition:all 0.3s;
+        }
+        .c-mute{background:rgba(255,255,255,0.08);color:white}
+        .c-mute.active{background:var(--neon-cyan);color:var(--bg-black)}
+        .c-end{background:var(--danger);color:white;width:62px!important;height:62px!important;box-shadow:0 0 25px rgba(255,0,64,0.4)}
+        .c-end:hover{transform:scale(1.08)}
+        .c-speak{background:rgba(255,255,255,0.08);color:white}
+        .c-speak.active{background:var(--neon-green);color:var(--bg-black)}
+
+        .call-meta{
+            position:absolute;bottom:20px;left:0;right:0;
+            text-align:center;font-family:'Share Tech Mono',monospace;
+            font-size:8px;color:var(--text-dim);letter-spacing:2px;z-index:1;
+        }
+
+        /* INCOMING */
+        .inc-popup{
+            display:none;position:fixed;top:14px;left:50%;transform:translateX(-50%);
+            background:var(--glass);backdrop-filter:blur(20px);
+            border:1px solid rgba(0,240,255,0.15);
+            padding:20px 28px;z-index:1000;text-align:center;min-width:260px;
+            clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+        }
+        .inc-popup.active{display:block;animation:popDown 0.4s ease}
+        .inc-popup::before{
+            content:'';position:absolute;inset:-1px;
+            background:linear-gradient(135deg,rgba(0,240,255,0.3),transparent 40%,transparent 60%,rgba(255,0,128,0.3));
+            clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+            z-index:-1;animation:borderGlow 2s infinite;
+        }
+        .inc-hex{width:55px;height:55px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:white;font-family:'Orbitron',monospace;margin:0 auto 8px}
+        .inc-popup h3{font-family:'Orbitron',monospace;font-size:13px;letter-spacing:1px}
+        .inc-popup p{color:var(--neon-cyan);font-size:10px;margin-bottom:12px;font-family:'Share Tech Mono',monospace;letter-spacing:2px}
+        .inc-btns{display:flex;gap:12px;justify-content:center}
+        .inc-btns button{width:48px;height:48px;border:none;font-size:16px;cursor:pointer;color:white;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)}
+        .inc-rej{background:var(--danger)}
+        .inc-acc{background:var(--neon-green);color:var(--bg-black)!important;animation:hexBreathe 1.5s infinite}
+
+        .img-prev{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:800;align-items:center;justify-content:center;cursor:pointer}
+        .img-prev.active{display:flex}
+        .img-prev img{max-width:92%;max-height:92%;border:1px solid rgba(0,240,255,0.15)}
+
+        .toast{
+            position:fixed;bottom:65px;left:50%;transform:translateX(-50%);
+            background:var(--glass);backdrop-filter:blur(10px);
+            color:var(--neon-cyan);padding:9px 20px;
+            border:1px solid rgba(0,240,255,0.15);
+            font-size:11px;font-family:'Share Tech Mono',monospace;
+            z-index:2000;display:none;white-space:nowrap;
+            clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px));
+        }
+        .toast.active{display:block;animation:toastSlide 0.3s ease}
+
+        /* MIC HELP */
+        .mic-panel{
+            display:none;position:fixed;bottom:0;left:0;right:0;
+            background:var(--glass);backdrop-filter:blur(20px);
+            border-top:2px solid var(--neon-pink);
+            padding:18px;z-index:3000;max-height:65vh;overflow-y:auto;
+            animation:slideUp 0.3s ease;
+        }
+        .mic-panel.active{display:block}
+        .mic-panel h3{font-family:'Orbitron',monospace;font-size:12px;color:var(--neon-pink);margin-bottom:10px;letter-spacing:1px}
+        .mic-step{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:12px;line-height:1.8}
+        .step-n{display:inline-block;width:22px;height:22px;background:var(--neon-pink);color:white;text-align:center;line-height:22px;font-size:9px;font-weight:800;margin-right:6px;clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)}
+        .mic-panel .try-btn{margin-top:12px;padding:10px 20px;border:1px solid var(--neon-green);background:rgba(0,255,136,0.08);color:var(--neon-green);font-family:'Orbitron',monospace;cursor:pointer;font-size:11px;letter-spacing:1px}
+        .mic-panel .close-btn{margin-top:8px;margin-left:10px;padding:10px 18px;border:1px solid var(--neon-cyan);background:none;color:var(--neon-cyan);font-family:'Share Tech Mono',monospace;cursor:pointer;font-size:11px}
+
+        .hidden{display:none!important}
+    </style>
+</head>
+<body>
+
+<div class="scanlines"></div>
+
+<!-- MIC HELP PANEL -->
+<div class="mic-panel" id="micPanel">
+    <h3><i class="fas fa-microphone-slash"></i> MICROPHONE FIX</h3>
+    <div id="micHelpContent"></div>
+    <button class="try-btn" onclick="retryMic()"><i class="fas fa-redo"></i> TRY AGAIN</button>
+    <button class="close-btn" onclick="document.getElementById('micPanel').classList.remove('active')">CLOSE</button>
+</div>
+
+<!-- ===== LOGIN ===== -->
+<div class="screen login-screen active" id="loginScr">
+    <div class="particles" id="particles"></div>
+    <div class="login-box">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <div class="logo-wrap">
+            <div class="hex-logo"><span class="logo-icon">⚡</span></div>
+        </div>
+        <h1>GTM CHAT</h1>
+        <div class="login-subtitle">CYBERPUNK MESSENGER</div>
+        <span class="version-tag">v4.0 // SESSION-PAIR</span>
+        <p>> encrypted p2p neural-link_</p>
+        <div class="input-grp">
+            <label><i class="fas fa-terminal"></i> OPERATOR HANDLE</label>
+            <input type="text" class="cy-input" id="nameInput" placeholder="enter_handle..." maxlength="25" autocomplete="off">
+        </div>
+        <button class="login-btn" onclick="joinApp()"><i class="fas fa-bolt"></i> &nbsp; INITIALIZE SESSION</button>
+        <div class="https-warn" id="httpsWarn">
+            ⚠ HTTPS REQUIRED FOR MIC<br>
+            Current: <span id="curProto"></span><br>
+            ✅ Use Netlify/GitHub Pages for HTTPS
+        </div>
+        <div class="sys-info">
+            <span class="nc">SYS://</span> No signup needed<br>
+            <span class="nv">NET://</span> P2P Encrypted<br>
+            <span class="np">MIC://</span> <span id="micStatusLogin">CHECKING...</span><br>
+            <span class="ng">PAIR://</span> One-time pairing key
+        </div>
+    </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div class="screen app-screen" id="appScr">
+    <div class="app-hdr">
+        <div class="brand">
+            <div class="brand-hex">⚡</div>
+            <div>
+                <div class="brand-title nc">GTM CHAT</div>
+                <div class="user-tag" id="dispName"></div>
+            </div>
+        </div>
+        <div class="hdr-btns">
+            <button class="hdr-btn" id="micInd" onclick="showMicHelp()" title="Mic"><i class="fas fa-microphone" id="micIco"></i></button>
+            <button class="hdr-btn" onclick="logout()" title="Disconnect"><i class="fas fa-power-off"></i></button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="active" onclick="swTab('nodes')"><i class="fas fa-network-wired"></i> NODES</button>
+        <button onclick="swTab('comms')"><i class="fas fa-satellite-dish"></i> COMMS</button>
+    </div>
+
+    <!-- NODES TAB -->
+    <div class="tab-panel active" id="nodesTab">
+        <div class="session-box">
+            <div class="sess-label">⬡ SESSION KEY</div>
+            <div class="sess-id" id="myPeerId">INITIALIZING...</div>
+            <div class="sess-btns">
+                <button class="cy-btn-sm" onclick="copyId()"><i class="fas fa-copy"></i> COPY</button>
+                <button class="cy-btn-sm pink" onclick="shareId()"><i class="fas fa-share-alt"></i> SHARE</button>
+                <button class="cy-btn-sm green" onclick="toggleQR()"><i class="fas fa-qrcode"></i> QR</button>
+            </div>
+        </div>
+
+        <div class="qr-box" id="qrBox" style="display:none">
+            <div class="qr-title">⬡ SCAN // SHOW QR</div>
+            <div class="qr-wrap"><canvas id="qrCanvas" width="170" height="170"></canvas></div>
+            <br>
+            <button class="cy-btn-sm pink" onclick="startScan()" id="scanBtn"><i class="fas fa-camera"></i> SCAN QR</button>
+            <button class="cy-btn-sm" onclick="stopScan()" id="stopScanBtn" style="display:none"><i class="fas fa-stop"></i> STOP</button>
+            <video id="qrVid" playsinline style="display:none;width:100%;max-width:230px;border:2px solid var(--neon-purple);margin:8px auto 0"></video>
+        </div>
+
+        <div class="conn-box">
+            <input type="text" class="cy-input" id="friendInput" placeholder="paste_pairing_key...">
+            <button class="conn-btn" onclick="connectPeer()"><i class="fas fa-link"></i> PAIR</button>
+        </div>
+
+        <div class="peers" id="peersList">
+            <div class="empty-st"><i class="fas fa-network-wired"></i><p>> no paired nodes_<br>> share key or scan QR</p></div>
+        </div>
+    </div>
+
+    <!-- COMMS TAB -->
+    <div class="tab-panel" id="commsTab">
+        <div class="chat-view" id="noChat" style="display:flex;align-items:center;justify-content:center;flex:1">
+            <div class="empty-st"><i class="fas fa-satellite-dish"></i><p>> no active transmission_<br>> select node from NODES tab</p></div>
+        </div>
+        <div class="chat-view" id="activeChat">
+            <div class="ch-hdr">
+                <button class="ch-back" onclick="closeChat()"><i class="fas fa-chevron-left"></i></button>
+                <div class="ch-hex" id="chAvatar"></div>
+                <div class="ch-info"><h3 id="chName"></h3><p id="chStatus">> LINKED</p></div>
+                <div class="ch-acts">
+                    <button onclick="startCall()" title="Audio Transmission"><i class="fas fa-satellite-dish"></i></button>
+                </div>
+            </div>
+            <div class="msg-area" id="msgArea">
+                <div class="typing-ind" id="typeDots"><span></span><span></span><span></span></div>
+            </div>
+            <div class="in-bar">
+                <div class="att-btns">
+                    <button onclick="document.getElementById('imgF').click()" title="Image"><i class="fas fa-image"></i></button>
+                    <button id="micBtn" onclick="toggleRec()" title="Voice"><i class="fas fa-microphone"></i></button>
+                </div>
+                <div class="rec-ind" id="recInd"><div class="rec-dot"></div><span id="recTime">0:00</span></div>
+                <div class="in-wrap" id="inWrap"><textarea id="msgTA" placeholder="> transmit_data..." rows="1" oninput="autoGrow(this);sendTyping()" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea></div>
+                <button class="send-hex" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <input type="file" id="imgF" class="hidden" accept="image/*" onchange="sendImage(event)">
+        </div>
+    </div>
+</div>
+
+<!-- ===== CALL SCREEN - AUDIO TRANSMISSION ===== -->
+<div class="call-screen" id="callScr">
+    <div class="call-bg">
+        <div class="orbital"></div>
+        <div class="orbital"></div>
+        <div class="orbital"></div>
+        <div class="data-stream" style="left:15%"></div>
+        <div class="data-stream" style="left:35%;animation-delay:-1s;opacity:.2"></div>
+        <div class="data-stream" style="left:65%;animation-delay:-2s"></div>
+        <div class="data-stream" style="left:85%;animation-delay:-.5s;opacity:.15"></div>
+    </div>
+    <div class="call-content">
+        <div class="transmission-label">
+            <span class="blinker">◆</span> AUDIO TRANSMISSION <span class="blinker">◆</span>
+        </div>
+        <div class="call-avatar" id="clAvatar"></div>
+        <div class="waveform idle" id="waveViz">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+        <h2 id="clName"></h2>
+        <p class="call-status" id="clStatus">> ESTABLISHING NEURAL LINK...</p>
+        <div class="call-timer" id="clTimer">00:00</div>
+        <div class="signal-bars" id="sigBars">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div>
+        </div>
+        <div class="call-btns">
+            <button class="c-mute" id="clMute" onclick="togMute()"><i class="fas fa-microphone"></i></button>
+            <button class="c-end" onclick="endCall()"><i class="fas fa-phone-slash"></i></button>
+            <button class="c-speak" id="clSpeak" onclick="this.classList.toggle('active')"><i class="fas fa-volume-up"></i></button>
+        </div>
+    </div>
+    <div class="call-meta">⬡ GTM CHAT // ENCRYPTED P2P // NEURAL-LINK PROTOCOL v4.0 ⬡</div>
+</div>
+
+<!-- INCOMING -->
+<div class="inc-popup" id="incPopup">
+    <div class="inc-hex" id="incAvatar"></div>
+    <h3 id="incName"></h3>
+    <p>> INCOMING TRANSMISSION<span style="animation:blink 1s infinite">_</span></p>
+    <div class="inc-btns">
+        <button class="inc-rej" onclick="rejInc()"><i class="fas fa-phone-slash"></i></button>
+        <button class="inc-acc" onclick="accInc()"><i class="fas fa-satellite-dish"></i></button>
+    </div>
+</div>
+
+<div class="img-prev" id="imgPrev" onclick="this.classList.remove('active')"><img id="prevImg" src=""></div>
+<div class="toast" id="toast"></div>
+
+<!-- LIBS -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+<script>
+// ============================================
+// GLOBALS
+// ============================================
+let myPeer=null,myName='',myId='';
+let conns={};// {peerId:{conn,name,msgs[],connected,unread,paired}}
+let activeChat=null;
+let mRec=null,aChunks=[],isRec=false,recInt=null,recSec=0;
+let callC=null,localStream=null,callInt=null,callSec=0,muted=false,incCall=null;
+let typeTimer=null,micOK=false;
+let qrStream=null,qrInt=null;
+
+// ============================================
+// INIT
+// ============================================
+window.addEventListener('load',()=>{
+    const p=location.protocol;
+    document.getElementById('curProto').textContent=p+'//'+location.hostname;
+    if(p!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+        document.getElementById('httpsWarn').classList.add('show');
+        document.getElementById('micStatusLogin').textContent='❌ HTTPS NEEDED';
+        document.getElementById('micStatusLogin').style.color='var(--danger)';
+    } else {checkMicSilent()}
+    const s=localStorage.getItem('gtm_name');
+    if(s) document.getElementById('nameInput').value=s;
+    mkParticles();
+});
+
+async function checkMicSilent(){
+    try{
+        if(navigator.permissions){
+            const r=await navigator.permissions.query({name:'microphone'});
+            setMicUI(r.state);
+            r.addEventListener('change',()=>setMicUI(r.state));
+        }
+    }catch(e){}
+}
+
+function setMicUI(state){
+    const ls=document.getElementById('micStatusLogin');
+    const ind=document.getElementById('micInd');
+    const ico=document.getElementById('micIco');
+    if(state==='granted'){
+        micOK=true;
+        if(ls){ls.textContent='✅ GRANTED';ls.style.color='var(--neon-green)'}
+        if(ind){ind.classList.add('mic-ok');ind.classList.remove('mic-no')}
+        if(ico)ico.className='fas fa-microphone';
+    }else if(state==='denied'){
+        micOK=false;
+        if(ls){ls.textContent='❌ DENIED';ls.style.color='var(--danger)'}
+        if(ind){ind.classList.add('mic-no');ind.classList.remove('mic-ok')}
+        if(ico)ico.className='fas fa-microphone-slash';
+    }else{
+        if(ls){ls.textContent='⏳ AWAITING';ls.style.color='var(--neon-yellow)'}
+    }
+}
+
+// ============================================
+// MIC PERMISSION
+// ============================================
+async function getMic(){
+    try{
+        const s=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+        micOK=true;setMicUI('granted');return s;
+    }catch(e){
+        micOK=false;
+        if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'){setMicUI('denied');showMicHelp();return null}
+        else if(e.name==='NotFoundError'){toast('❌ NO MIC FOUND');return null}
+        else{toast('❌ MIC: '+e.name);showMicHelp();return null}
+    }
+}
+
+function showMicHelp(){
+    const panel=document.getElementById('micPanel');
+    const c=document.getElementById('micHelpContent');
+    const isHTTPS=location.protocol==='https:'||location.hostname==='localhost';
+    const isAndroid=/android/i.test(navigator.userAgent);
+    const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    let h='';
+    if(!isHTTPS){
+        h+=`<div class="mic-step"><span class="step-n">!</span><strong style="color:var(--danger)">HTTPS REQUIRED</strong><br>Mic sirf HTTPS pe kaam karta hai<br>→ Netlify.com pe free host karo<br>→ Ya GitHub Pages use karo</div>`;
+    }else if(isAndroid){
+        h+=`<div class="mic-step"><span class="step-n">1</span>Address bar me 🔒 <strong>Lock icon</strong> tap karo</div>`;
+        h+=`<div class="mic-step"><span class="step-n">2</span><strong>Permissions</strong> → <strong>Microphone</strong> → <strong>Allow</strong></div>`;
+        h+=`<div class="mic-step"><span class="step-n">3</span>Page <strong>Reload</strong> karo</div>`;
+        h+=`<div class="mic-step"><span class="step-n">!</span>Alt: Chrome Settings → Site Settings → Microphone → Allow</div>`;
+    }else if(isIOS){
+        h+=`<div class="mic-step"><span class="step-n">1</span>iPhone <strong>Settings</strong> → <strong>Safari</strong></div>`;
+        h+=`<div class="mic-step"><span class="step-n">2</span><strong>Microphone</strong> → <strong>Allow</strong></div>`;
+        h+=`<div class="mic-step"><span class="step-n">3</span>Address bar me <strong>aA</strong> → Website Settings → Mic Allow</div>`;
+    }else{
+        h+=`<div class="mic-step"><span class="step-n">1</span>Address bar me 🔒 Click → <strong>Microphone Allow</strong></div>`;
+        h+=`<div class="mic-step"><span class="step-n">2</span>Page <strong>Reload</strong> karo</div>`;
+    }
+    c.innerHTML=h;panel.classList.add('active');
+}
+
+async function retryMic(){
+    document.getElementById('micPanel').classList.remove('active');
+    const s=await getMic();
+    if(s){s.getTracks().forEach(t=>t.stop());toast('✅ MIC GRANTED!')}
+}
+
+// ============================================
+// PARTICLES
+// ============================================
+function mkParticles(){
+    const c=document.getElementById('particles');if(!c)return;
+    const types=['cyan','purple','pink'];
+    for(let i=0;i<30;i++){
+        const p=document.createElement('div');
+        p.className='particle '+types[i%3];
+        p.style.left=Math.random()*100+'%';
+        p.style.animationDuration=(Math.random()*10+5)+'s';
+        p.style.animationDelay=(Math.random()*6)+'s';
+        p.style.width=p.style.height=(Math.random()*2+1)+'px';
+        c.appendChild(p);
+    }
+}
+
+// ============================================
+// JOIN / AUTH
+// ============================================
+function joinApp(){
+    const n=document.getElementById('nameInput').value.trim();
+    if(!n){toast('❌ ENTER HANDLE');return}
+    myName=n;localStorage.setItem('gtm_name',n);
+    toast('🔄 INITIALIZING...');
+
+    myPeer=new Peer();
+
+    myPeer.on('open',id=>{
+        myId=id;
+        document.getElementById('loginScr').classList.remove('active');
+        document.getElementById('appScr').classList.add('active');
+        document.getElementById('dispName').textContent='> '+n+' [ONLINE]';
+        document.getElementById('myPeerId').textContent=id;
+        genQR(id);
+        toast('✅ SESSION LIVE // SHARE KEY');
+        checkMicSilent();
+        loadPaired();
+    });
+
+    myPeer.on('connection',c=>handleInc(c));
+
+    myPeer.on('call',call=>{
+        incCall=call;
+        const pid=call.peer;
+        const pn=conns[pid]?conns[pid].name:pid.substring(0,8);
+        document.getElementById('incAvatar').textContent=pn.charAt(0).toUpperCase();
+        document.getElementById('incAvatar').style.background=grad(pid);
+        document.getElementById('incName').textContent=pn;
+        document.getElementById('incPopup').classList.add('active');
+        toast('📡 INCOMING: '+pn);
+        // Vibrate if available
+        if(navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
+    });
+
+    myPeer.on('error',e=>{
+        if(e.type==='peer-unavailable')toast('❌ NODE OFFLINE');
+        else toast('❌ '+e.type);
+    });
+    myPeer.on('disconnected',()=>{toast('⚠ RECONNECTING...');myPeer.reconnect()});
+}
+
+// ============================================
+// PAIRING - PERSISTENT CONNECTIONS
+// ============================================
+function connectPeer(){
+    const fid=document.getElementById('friendInput').value.trim();
+    if(!fid){toast('❌ PASTE KEY');return}
+    if(fid===myId){toast('❌ SELF-LINK BLOCKED');return}
+    if(conns[fid]?.connected){toast('⚠ ALREADY PAIRED');return}
+
+    toast('🔄 PAIRING...');
+    const c=myPeer.connect(fid,{metadata:{name:myName}});
+    c.on('open',()=>{
+        c.send({type:'intro',name:myName});
+        addConn(fid,c,'Operator');
+        document.getElementById('friendInput').value='';
+        toast('✅ PAIRED SUCCESSFULLY');
+    });
+    c.on('data',d=>handleData(fid,d));
+    c.on('close',()=>{if(conns[fid]){conns[fid].connected=false;renderPeers()}});
+    c.on('error',()=>toast('❌ PAIR FAILED'));
+}
+
+function handleInc(conn){
+    const pid=conn.peer;
+    conn.on('open',()=>conn.send({type:'intro',name:myName}));
+    conn.on('data',d=>{
+        if(d.type==='intro'&&!conns[pid]){addConn(pid,conn,d.name);toast('🟢 '+d.name+' PAIRED')}
+        handleData(pid,d);
+    });
+    conn.on('close',()=>{if(conns[pid]){conns[pid].connected=false;renderPeers()}});
+}
+
+function addConn(pid,conn,name){
+    if(!conns[pid]){conns[pid]={conn,name,msgs:[],connected:true,unread:0,paired:true}}
+    else{conns[pid].conn=conn;conns[pid].connected=true;conns[pid].paired=true;if(name!=='Operator'&&name)conns[pid].name=name}
+    savePaired();renderPeers();
+}
+
+// ============================================
+// PERSISTENT PAIRING (localStorage)
+// ============================================
+function savePaired(){
+    const d={};
+    Object.entries(conns).forEach(([p,c])=>{d[p]={name:c.name,paired:true}});
+    localStorage.setItem('gtm_pairs',JSON.stringify(d));
+}
+
+function loadPaired(){
+    const s=localStorage.getItem('gtm_pairs');if(!s)return;
+    try{
+        const d=JSON.parse(s);
+        Object.entries(d).forEach(([pid,info])=>{
+            if(!conns[pid]){
+                conns[pid]={conn:null,name:info.name,msgs:[],connected:false,unread:0,paired:true};
+                // Auto-reconnect to saved pairs
+                setTimeout(()=>{
+                    try{
+                        const c=myPeer.connect(pid,{metadata:{name:myName}});
+                        c.on('open',()=>{
+                            c.send({type:'intro',name:myName});
+                            conns[pid].conn=c;conns[pid].connected=true;renderPeers();
+                        });
+                        c.on('data',dd=>handleData(pid,dd));
+                        c.on('close',()=>{if(conns[pid]){conns[pid].connected=false;renderPeers()}});
+                    }catch(e){}
+                },1200);
+            }
+        });
+        renderPeers();
+    }catch(e){}
+}
+
+// ============================================
+// DATA HANDLING
+// ============================================
+function handleData(pid,d){
+    if(!conns[pid])return;
+    switch(d.type){
+        case 'intro':conns[pid].name=d.name;savePaired();renderPeers();break;
+        case 'text':addMsg(pid,'received','text',d.content);break;
+        case 'image':addMsg(pid,'received','image',d.content);break;
+        case 'audio':addMsg(pid,'received','audio',d.content);break;
+        case 'typing':
+            if(activeChat===pid){
+                document.getElementById('typeDots').classList.add('active');
+                document.getElementById('chStatus').textContent='> TYPING...';
+                clearTimeout(typeTimer);
+                typeTimer=setTimeout(()=>{document.getElementById('typeDots').classList.remove('active');document.getElementById('chStatus').textContent='> LINKED'},2000);
+            }break;
+    }
+}
+
+function addMsg(pid,dir,type,content){
+    if(!conns[pid])return;
+    const m={dir,type,content,time:new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'})};
+    conns[pid].msgs.push(m);
+    if(activeChat===pid){renderMsg(m);scrollBot()}
+    else{conns[pid].unread=(conns[pid].unread||0)+1;renderPeers();toast('💬 '+conns[pid].name)}
+}
+
+// ============================================
+// SEND
+// ============================================
+function sendMsg(){
+    const ta=document.getElementById('msgTA');const t=ta.value.trim();
+    if(!t||!activeChat)return;
+    const p=conns[activeChat];
+    if(!p?.conn?.open){toast('❌ LINK BROKEN - RECONNECTING...');reconnectPeer(activeChat);return}
+    p.conn.send({type:'text',content:t});
+    addMsg(activeChat,'sent','text',t);
+    ta.value='';ta.style.height='38px';
+}
+
+function sendImage(e){
+    const f=e.target.files[0];if(!f||!activeChat)return;
+    const p=conns[activeChat];if(!p?.conn?.open){toast('❌ NOT LINKED');return}
+    toast('📷 TRANSMITTING...');
+    const r=new FileReader();
+    r.onload=()=>{
+        const img=new Image();img.onload=()=>{
+            const c=document.createElement('canvas');
+            const mx=800;let w=img.width,h=img.height;
+            if(w>mx){h=h*mx/w;w=mx}
+            c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+            const d=c.toDataURL('image/jpeg',0.7);
+            p.conn.send({type:'image',content:d});
+            addMsg(activeChat,'sent','image',d);
+            toast('✅ IMAGE TRANSMITTED');
+        };img.src=r.result;
+    };r.readAsDataURL(f);e.target.value='';
+}
+
+function sendTyping(){
+    if(!activeChat)return;
+    const p=conns[activeChat];
+    if(p?.conn?.open)p.conn.send({type:'typing'});
+}
+
+// ============================================
+// RECONNECT
+// ============================================
+function reconnectPeer(pid){
+    if(!conns[pid]||!myPeer)return;
+    try{
+        const c=myPeer.connect(pid,{metadata:{name:myName}});
+        c.on('open',()=>{
+            c.send({type:'intro',name:myName});
+            conns[pid].conn=c;conns[pid].connected=true;renderPeers();
+            if(activeChat===pid) document.getElementById('chStatus').textContent='> LINKED';
+            toast('✅ RECONNECTED');
+        });
+        c.on('data',d=>handleData(pid,d));
+        c.on('close',()=>{conns[pid].connected=false;renderPeers()});
+    }catch(e){toast('❌ RECONNECT FAILED')}
+}
+
+// ============================================
+// AUDIO RECORDING
+// ============================================
+async function toggleRec(){
+    if(isRec){stopRec();return}
+    const stream=await getMic();
+    if(!stream)return;
+    startRec(stream);
+}
+
+function startRec(stream){
+    try{
+        mRec=new MediaRecorder(stream);aChunks=[];
+        mRec.ondataavailable=e=>aChunks.push(e.data);
+        mRec.onstop=()=>{
+            const blob=new Blob(aChunks,{type:'audio/webm'});
+            stream.getTracks().forEach(t=>t.stop());
+            const r=new FileReader();
+            r.onload=()=>{
+                if(activeChat){
+                    const p=conns[activeChat];
+                    if(p?.conn?.open){p.conn.send({type:'audio',content:r.result});addMsg(activeChat,'sent','audio',r.result);toast('✅ AUDIO SENT')}
+                }
+            };r.readAsDataURL(blob);
+        };
+        mRec.start();isRec=true;recSec=0;
+        document.getElementById('micBtn').classList.add('recording');
+        document.getElementById('recInd').classList.add('active');
+        document.getElementById('inWrap').style.display='none';
+        recInt=setInterval(()=>{recSec++;document.getElementById('recTime').textContent=Math.floor(recSec/60)+':'+(recSec%60).toString().padStart(2,'0')},1000);
+        toast('🔴 RECORDING...');
+    }catch(e){toast('❌ REC FAILED');stream.getTracks().forEach(t=>t.stop())}
+}
+
+function stopRec(){
+    if(mRec?.state!=='inactive')mRec.stop();
+    isRec=false;clearInterval(recInt);
+    document.getElementById('micBtn').classList.remove('recording');
+    document.getElementById('recInd').classList.remove('active');
+    document.getElementById('inWrap').style.display='block';
+}
+
+// ============================================
+// AUDIO CALL - TRANSMISSION
+// ============================================
+async function startCall(){
+    if(!activeChat)return;
+    const stream=await getMic();
+    if(!stream)return;
+
+    localStream=stream;
+    callC=myPeer.call(activeChat,stream);
+
+    callC.on('stream',rs=>{
+        const a=new Audio();a.srcObject=rs;a.play().catch(()=>{});
+        document.getElementById('clStatus').textContent='> NEURAL LINK ESTABLISHED';
+        document.getElementById('waveViz').classList.remove('idle');
+        document.getElementById('sigBars').classList.remove('weak');
+        startCallTimer();
+    });
+    callC.on('close',()=>endCall(true));
+
+    const pn=conns[activeChat]?.name||'?';
+    document.getElementById('clAvatar').textContent=pn.charAt(0).toUpperCase();
+    document.getElementById('clAvatar').style.background=grad(activeChat);
+    document.getElementById('clName').textContent=pn;
+    document.getElementById('clStatus').textContent='> ESTABLISHING NEURAL LINK...';
+    document.getElementById('clTimer').textContent='00:00';
+    document.getElementById('waveViz').classList.add('idle');
+    document.getElementById('sigBars').classList.add('weak');
+    document.getElementById('callScr').classList.add('active');
+}
+
+async function accInc(){
+    document.getElementById('incPopup').classList.remove('active');
+    if(!incCall)return;
+
+    const stream=await getMic();
+    if(!stream){rejInc();return}
+
+    localStream=stream;
+    incCall.answer(stream);
+    callC=incCall;
+
+    callC.on('stream',rs=>{
+        const a=new Audio();a.srcObject=rs;a.play().catch(()=>{});
+        document.getElementById('clStatus').textContent='> NEURAL LINK ESTABLISHED';
+        document.getElementById('waveViz').classList.remove('idle');
+        document.getElementById('sigBars').classList.remove('weak');
+        startCallTimer();
+    });
+    callC.on('close',()=>endCall(true));
+
+    const pid=incCall.peer;
+    const pn=conns[pid]?.name||pid.substring(0,8);
+    document.getElementById('clAvatar').textContent=pn.charAt(0).toUpperCase();
+    document.getElementById('clAvatar').style.background=grad(pid);
+    document.getElementById('clName').textContent=pn;
+    document.getElementById('clStatus').textContent='> CONNECTING NEURAL LINK...';
+    document.getElementById('clTimer').textContent='00:00';
+    document.getElementById('waveViz').classList.add('idle');
+    document.getElementById('sigBars').classList.add('weak');
+    document.getElementById('callScr').classList.add('active');
+}
+
+function rejInc(){
+    document.getElementById('incPopup').classList.remove('active');
+    if(incCall){incCall.close();incCall=null}
+}
+
+function endCall(remote=false){
+    if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+    if(callC&&!remote)callC.close();
+    callC=null;incCall=null;
+    clearInterval(callInt);callInt=null;callSec=0;muted=false;
+    document.getElementById('callScr').classList.remove('active');
+    document.getElementById('incPopup').classList.remove('active');
+    document.getElementById('clMute').classList.remove('active');
+    document.getElementById('clMute').innerHTML='<i class="fas fa-microphone"></i>';
+    toast('📡 TRANSMISSION ENDED');
+}
+
+function togMute(){
+    muted=!muted;
+    if(localStream)localStream.getAudioTracks().forEach(t=>t.enabled=!muted);
+    const b=document.getElementById('clMute');
+    b.classList.toggle('active');
+    b.innerHTML=muted?'<i class="fas fa-microphone-slash"></i>':'<i class="fas fa-microphone"></i>';
+}
+
+function startCallTimer(){
+    callSec=0;clearInterval(callInt);
+    callInt=setInterval(()=>{
+        callSec++;
+        document.getElementById('clTimer').textContent=
+            Math.floor(callSec/60).toString().padStart(2,'0')+':'+(callSec%60).toString().padStart(2,'0');
+    },1000);
+}
+
+// ============================================
+// QR
+// ============================================
+function genQR(t){
+    if(typeof QRCode!=='undefined')
+        QRCode.toCanvas(document.getElementById('qrCanvas'),t,{width:170,margin:1,color:{dark:'#000000',light:'#ffffff'}},()=>{});
+}
+
+function toggleQR(){const s=document.getElementById('qrBox');s.style.display=s.style.display==='none'?'block':'none'}
+
+function startScan(){
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(stream=>{
+        qrStream=stream;
+        const v=document.getElementById('qrVid');
+        v.srcObject=stream;v.style.display='block';v.play();
+        document.getElementById('scanBtn').style.display='none';
+        document.getElementById('stopScanBtn').style.display='inline-flex';
+        toast('📸 SCANNER ACTIVE');
+
+        const c=document.createElement('canvas');const ctx=c.getContext('2d');
+        qrInt=setInterval(()=>{
+            if(v.readyState===v.HAVE_ENOUGH_DATA){
+                c.width=v.videoWidth;c.height=v.videoHeight;
+                ctx.drawImage(v,0,0,c.width,c.height);
+                if(typeof jsQR!=='undefined'){
+                    const code=jsQR(ctx.getImageData(0,0,c.width,c.height).data,c.width,c.height);
+                    if(code){
+                        document.getElementById('friendInput').value=code.data;
+                        stopScan();toast('✅ QR DECODED');
+                        connectPeer();
+                    }
+                }
+            }
+        },400);
+    }).catch(()=>toast('❌ CAMERA DENIED'));
+}
+
+function stopScan(){
+    if(qrStream){qrStream.getTracks().forEach(t=>t.stop());qrStream=null}
+    clearInterval(qrInt);
+    document.getElementById('qrVid').style.display='none';
+    document.getElementById('scanBtn').style.display='inline-flex';
+    document.getElementById('stopScanBtn').style.display='none';
+}
+
+// ============================================
+// UI
+// ============================================
+function swTab(t){
+    document.querySelectorAll('.tabs button').forEach((b,i)=>b.classList.toggle('active',(t==='nodes'&&i===0)||(t==='comms'&&i===1)));
+    document.getElementById('nodesTab').classList.toggle('active',t==='nodes');
+    document.getElementById('commsTab').classList.toggle('active',t==='comms');
+}
+
+function openChat(pid){
+    activeChat=pid;const p=conns[pid];if(!p)return;
+    p.unread=0;renderPeers();swTab('comms');
+    document.getElementById('noChat').style.display='none';
+    document.getElementById('activeChat').classList.add('active');
+    document.getElementById('chAvatar').textContent=p.name.charAt(0).toUpperCase();
+    document.getElementById('chAvatar').style.background=grad(pid);
+    document.getElementById('chName').textContent=p.name;
+    document.getElementById('chStatus').textContent=p.connected?'> LINKED':'> OFFLINE';
+    const a=document.getElementById('msgArea');
+    a.innerHTML='<div class="typing-ind" id="typeDots"><span></span><span></span><span></span></div>';
+    p.msgs.forEach(m=>renderMsg(m));scrollBot();
+    // Auto-reconnect if not connected
+    if(!p.connected&&p.paired) reconnectPeer(pid);
+}
+
+function closeChat(){
+    activeChat=null;
+    document.getElementById('activeChat').classList.remove('active');
+    document.getElementById('noChat').style.display='flex';
+    swTab('nodes');
+}
+
+function renderMsg(m){
+    const a=document.getElementById('msgArea');
+    const dots=document.getElementById('typeDots');
+    const d=document.createElement('div');
+    d.className='msg '+m.dir;
+    let h='';
+    if(m.type==='image')h+=`<img class="m-img" src="${m.content}" onclick="prevImg(this.src)">`;
+    else if(m.type==='audio')h+=`<audio controls src="${m.content}"></audio>`;
+    else h+=`<div class="m-text">${esc(m.content)}</div>`;
+    h+=`<div class="m-time">${m.time}${m.dir==='sent'?' <i class="fas fa-check-double" style="color:var(--neon-cyan);font-size:7px"></i>':''}</div>`;
+    d.innerHTML=h;a.insertBefore(d,dots);
+}
+
+function renderPeers(){
+    const c=document.getElementById('peersList');
+    const e=Object.entries(conns);
+    if(!e.length){c.innerHTML='<div class="empty-st"><i class="fas fa-network-wired"></i><p>> no paired nodes_<br>> share key or scan QR</p></div>';return}
+    e.sort((a,b)=>(b[1].connected?1:0)-(a[1].connected?1:0));
+    let h='';
+    e.forEach(([pid,p])=>{
+        h+=`<div class="peer-card ${activeChat===pid?'active':''}" onclick="openChat('${pid}')">
+            <div class="peer-hex" style="background:${grad(pid)}">${p.name.charAt(0).toUpperCase()}</div>
+            <div class="peer-info">
+                <h4>${esc(p.name)}</h4>
+                <p>> ${p.connected?'ONLINE':'OFFLINE'}${p.paired?' // PAIRED':''}</p>
+            </div>
+            ${p.connected?'<div class="dot-on"></div>':'<div class="dot-off"></div>'}
+            ${p.unread?`<div class="unread-badge">${p.unread}</div>`:''}
+            <button class="act-btn" onclick="event.stopPropagation();openChat('${pid}')"><i class="fas fa-comment"></i></button>
+        </div>`;
+    });
+    c.innerHTML=h;
+}
+
+function scrollBot(){const a=document.getElementById('msgArea');setTimeout(()=>a.scrollTop=a.scrollHeight,50)}
+function autoGrow(e){e.style.height='38px';e.style.height=Math.min(e.scrollHeight,90)+'px'}
+function prevImg(s){document.getElementById('prevImg').src=s;document.getElementById('imgPrev').classList.add('active')}
+
+function copyId(){
+    if(!myId)return;
+    if(navigator.clipboard)navigator.clipboard.writeText(myId).then(()=>toast('✅ KEY COPIED'));
+    else{const t=document.createElement('textarea');t.value=myId;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('✅ COPIED')}
+}
+
+function shareId(){
+    if(!myId)return;
+    if(navigator.share)navigator.share({title:'GTM Chat',text:'⚡ GTM Chat Pairing Key: '+myId,url:location.href}).catch(()=>{});
+    else copyId();
+}
+
+function logout(){
+    if(callC)endCall();stopScan();
+    if(myPeer)myPeer.destroy();
+    myPeer=null;myId='';conns={};activeChat=null;
+    document.getElementById('appScr').classList.remove('active');
+    document.getElementById('loginScr').classList.add('active');
+}
+
+function grad(pid){
+    const g=['linear-gradient(135deg,#00f0ff,#0040cc)','linear-gradient(135deg,#ff0080,#8800cc)','linear-gradient(135deg,#00ff88,#0088cc)','linear-gradient(135deg,#ffe600,#ff4400)','linear-gradient(135deg,#b400ff,#ff0066)','linear-gradient(135deg,#00ccff,#00ff88)'];
+    return g[(pid.charCodeAt(0)+pid.charCodeAt(1))%g.length];
+}
+
+function esc(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML.replace(/\n/g,'<br>')}
+
+function toast(m){
+    const t=document.getElementById('toast');t.textContent=m;t.classList.add('active');
+    clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('active'),3000);
+}
+
+// CLEANUP
+window.addEventListener('beforeunload',()=>{if(callC)endCall();stopScan();if(myPeer)myPeer.destroy()});
+document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')joinApp()});
+</script>
+</body>
+</html>
