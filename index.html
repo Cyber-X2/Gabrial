@@ -123,6 +123,7 @@ overflow:hidden;
 .ci{width:100%;padding:clamp(10px, 2.5vw, 14px) clamp(12px, 3vw, 16px);border:1px solid rgba(0,229,255,0.12);background:rgba(0,229,255,0.03);color:var(--nc);font-size:clamp(14px, 3vw, 16px);font-family:'Share Tech Mono',monospace;outline:none;transition:all .4s cubic-bezier(0.16,1,0.3,1);clip-path:polygon(0 0,calc(100% - 8px)0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px))}
 .ci:focus{border-color:var(--nc);box-shadow:0 0 25px rgba(0,229,255,0.1);background:rgba(0,229,255,0.05)}
 .ci::placeholder{color:rgba(0,229,255,0.25)}
+.ci:disabled{opacity:0.4;cursor:not-allowed}
 
 .lbtn{width:100%;padding:clamp(12px, 3vw, 16px);border:1px solid var(--nc);background:linear-gradient(135deg,rgba(0,229,255,0.1),rgba(118,255,3,0.05));color:var(--nc);font-size:clamp(12px, 3vw, 15px);font-weight:700;cursor:pointer;font-family:'Orbitron',monospace;margin-top:6px;letter-spacing:2px;text-transform:uppercase;transition:all .4s cubic-bezier(0.16,1,0.3,1);position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 10px)0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
 .lbtn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(0,229,255,0.2),transparent);transition:left .6s}
@@ -130,7 +131,7 @@ overflow:hidden;
 .lbtn:hover{box-shadow:0 0 35px rgba(0,229,255,0.2);transform:translateY(-1px)}
 .lbtn:active{transform:scale(.98) translateY(0)}
 
-/* SYSTEM INFO - NO MIC ROW */
+/* SYSTEM INFO */
 .sysinfo{margin-top:clamp(10px, 2vw, 14px);font-family:'Share Tech Mono',monospace;font-size:clamp(10px, 2.2vw, 12px);color:var(--t2);line-height:2;text-align:left;padding:clamp(8px, 2vw, 12px);background:rgba(0,0,0,0.4);border:1px solid rgba(0,229,255,0.06);border-radius:8px}
 .sysinfo .row{display:flex;align-items:flex-start;gap:6px;padding:1px 0}
 .sysinfo .lbl{color:var(--nc);white-space:nowrap;min-width:clamp(55px, 12vw, 70px);text-shadow:0 0 6px var(--nc)}
@@ -247,7 +248,8 @@ overflow:hidden;
 .td span:nth-child(2){animation-delay:.2s}
 .td span:nth-child(3){animation-delay:.4s}
 
-.ib{padding:clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 14px);display:flex;align-items:flex-end;gap:8px;background:rgba(4,4,12,0.98);border-top:1px solid rgba(0,229,255,0.08)}
+/* INPUT BAR - FIX: Added flex-shrink:0 */
+.ib{padding:clamp(8px, 2vw, 12px) clamp(10px, 2.5vw, 14px);display:flex;align-items:flex-end;gap:8px;background:rgba(4,4,12,0.98);border-top:1px solid rgba(0,229,255,0.08);flex-shrink:0}
 .ab{display:flex;gap:5px}
 .ab button{width:clamp(38px, 8vw, 46px);height:clamp(38px, 8vw, 46px);border:1px solid rgba(0,229,255,0.1);background:rgba(0,229,255,0.03);color:var(--t2);font-size:clamp(15px, 3.5vw, 19px);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:12px;transition:all .3s;flex-shrink:0}
 .ab button:hover{color:var(--nc);background:rgba(0,229,255,0.08)}
@@ -258,7 +260,8 @@ overflow:hidden;
 .iw textarea::placeholder{color:rgba(0,229,255,0.2)}
 .shex{width:clamp(38px, 8vw, 46px);height:clamp(38px, 8vw, 46px);border:1px solid var(--nc);background:linear-gradient(135deg,rgba(0,229,255,0.15),rgba(118,255,3,0.1));color:var(--nc);font-size:clamp(15px, 3.5vw, 19px);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:50%;transition:all .3s}
 .shex:hover{background:rgba(0,229,255,0.25);box-shadow:0 0 15px rgba(0,229,255,0.2);transform:scale(1.05)}
-.ri{display:none;align-items:center;gap:6px;color:var(--danger);font-size:clamp(12px, 2.5vw, 14px);font-family:'Share Tech Mono',monospace}
+/* Recording indicator now shows BESIDE input, not instead of it */
+.ri{display:none;align-items:center;gap:6px;color:var(--danger);font-size:clamp(12px, 2.5vw, 14px);font-family:'Share Tech Mono',monospace;padding:0 8px;white-space:nowrap}
 .ri.active{display:flex}
 .rd{width:6px;height:6px;background:var(--danger);border-radius:50%;animation:blink 1s infinite;box-shadow:0 0 6px var(--danger)}
 
@@ -392,7 +395,6 @@ overflow:hidden;
 <div class="igrp"><label><i class="fas fa-user"></i> YOUR NAME</label><input type="text" class="ci" id="nameIn" placeholder="Apna naam likho..." maxlength="25" autocomplete="off"></div>
 <button class="lbtn" onclick="joinApp()"><i class="fas fa-bolt"></i> START SESSION</button>
 
-<!-- SYSTEM INFO - NO MIC ROW -->
 <div class="sysinfo" id="sysBox">
 <div class="row"><span class="lbl">SYS://</span><span class="val" id="sysIP">Detecting IP...</span></div>
 <div class="row"><span class="lbl v">NET://</span><span class="val">P2P Encrypted Connection</span></div>
@@ -465,7 +467,8 @@ overflow:hidden;
 <div class="cha"><button onclick="startCall()" title="Call"><i class="fas fa-phone-alt"></i></button></div>
 </div>
 <div class="ma" id="mA"><div class="td" id="tD"><span></span><span></span><span></span></div></div>
-<div class="ib">
+<!-- FIXED INPUT BAR: Added ID to wrapper for easy access, recording indicator moves alongside -->
+<div class="ib" id="inputBar">
 <div class="ab">
 <button onclick="document.getElementById('iF').click()"><i class="fas fa-image"></i></button>
 <button id="mB" onclick="togRec()"><i class="fas fa-microphone"></i></button>
@@ -609,14 +612,84 @@ function loadP(){const s=localStorage.getItem('gtm_p7');if(!s)return;try{const d
 function hData(key,d){if(!C[key])return;if(d.type==='intro'){if(d.name)C[key].name=d.name;if(d.peerId)C[key].peerId=d.peerId;saveP();rP();return}switch(d.type){case'text':addM(key,'r','text',d.content);break;case'image':addM(key,'r','image',d.content);break;case'audio':addM(key,'r','audio',d.content);break;case'typing':if(actChat===key){document.getElementById('tD').classList.add('active');document.getElementById('cS').textContent='> TYPING...';clearTimeout(tyT);tyT=setTimeout(()=>{document.getElementById('tD').classList.remove('active');document.getElementById('cS').textContent='> CONNECTED'},2000)}break}}
 function addM(key,dir,type,content){if(!C[key])return;const m={dir,type,content,time:new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'})};C[key].msgs.push(m);if(actChat===key){renM(m);scrB()}else{C[key].unread=(C[key].unread||0)+1;rP();toast(C[key].name)}}
 
-function sendMsg(){const ta=document.getElementById('mTA'),t=ta.value.trim();if(!t||!actChat)return;const p=C[actChat];if(!p?.conn?.open){toast('Reconnecting...');recon(actChat);return}p.conn.send({type:'text',content:t});addM(actChat,'s','text',t);ta.value='';ta.style.height='38px'}
+/* ========== SEND - IMPROVED ========== */
+function sendMsg(){
+    const ta=document.getElementById('mTA'),t=ta.value.trim();
+    if(!t||!actChat)return;
+    const p=C[actChat];
+    if(!p){
+        toast('Error: No peer data'); return;
+    }
+    
+    // Check connection status
+    if(!p.conn || !p.conn.open){
+        toast('Reconnecting...');
+        recon(actChat);
+        // Don't return, let recon try to handle it. But for safety we return to avoid error.
+        // Ideally we would queue, but simple apps just notify user to retry.
+        // However, if we return, the text stays in box. That's acceptable.
+        return;
+    }
+    
+    try {
+        p.conn.send({type:'text',content:t});
+        addM(actChat,'s','text',t);
+        ta.value='';
+        ta.style.height='38px';
+    } catch(e) {
+        toast('Send failed. Retrying...');
+        recon(actChat);
+    }
+}
+
 function sendImg(e){const f=e.target.files[0];if(!f||!actChat)return;const p=C[actChat];if(!p?.conn?.open)return;toast('Sending...');const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const mx=800;let w=img.width,h=img.height;if(w>mx){h=h*mx/w;w=mx}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const d=c.toDataURL('image/jpeg',0.7);p.conn.send({type:'image',content:d});addM(actChat,'s','image',d);toast('Sent!')};img.src=r.result};r.readAsDataURL(f);e.target.value=''}
 function sendTy(){if(!actChat)return;const p=C[actChat];if(p?.conn?.open)p.conn.send({type:'typing'})}
 function recon(key){if(!C[key]?.peerId||!myPeer)return;try{const c=myPeer.connect(C[key].peerId,{metadata:{name:myName,key:PK}});c.on('open',()=>{c.send({type:'intro',name:myName,key:PK,peerId:myId});C[key].conn=c;C[key].connected=true;rP();toast('Reconnected!')});c.on('data',d=>hData(key,d));c.on('close',()=>{C[key].connected=false;rP()})}catch(e){}}
 
+/* ========== AUDIO REC - FIXED UI ========== */
 async function togRec(){if(isRec){stopR();return}const s=await getMic();if(!s)return;startR(s)}
-function startR(stream){try{mRec2=new MediaRecorder(stream);aCh2=[];mRec2.ondataavailable=e=>aCh2.push(e.data);mRec2.onstop=()=>{const b=new Blob(aCh2,{type:'audio/webm'});stream.getTracks().forEach(t=>t.stop());const r=new FileReader();r.onload=()=>{if(actChat){const p=C[actChat];if(p?.conn?.open){p.conn.send({type:'audio',content:r.result});addM(actChat,'s','audio',r.result);toast('Audio sent!')}}};r.readAsDataURL(b)};mRec2.start();isRec=true;recS=0;document.getElementById('mB').classList.add('rec');document.getElementById('rI').classList.add('active');document.getElementById('iW').style.display='none';recI=setInterval(()=>{recS++;document.getElementById('rT').textContent=Math.floor(recS/60)+':'+(recS%60).toString().padStart(2,'0')},1000);toast('Recording...')}catch(e){toast('Failed');stream.getTracks().forEach(t=>t.stop())}}
-function stopR(){if(mRec2?.state!=='inactive')mRec2.stop();isRec=false;clearInterval(recI);document.getElementById('mB').classList.remove('rec');document.getElementById('rI').classList.remove('active');document.getElementById('iW').style.display='block'}
+function startR(stream){
+    try{
+        mRec2=new MediaRecorder(stream);aCh2=[];
+        mRec2.ondataavailable=e=>aCh2.push(e.data);
+        mRec2.onstop=()=>{
+            const b=new Blob(aCh2,{type:'audio/webm'});
+            stream.getTracks().forEach(t=>t.stop());
+            const r=new FileReader();
+            r.onload=()=>{
+                if(actChat){
+                    const p=C[actChat];
+                    if(p?.conn?.open){
+                        p.conn.send({type:'audio',content:r.result});
+                        addM(actChat,'s','audio',r.result);
+                        toast('Audio sent!')
+                    }
+                }
+            };
+            r.readAsDataURL(b)
+        };
+        mRec2.start();isRec=true;recS=0;
+        document.getElementById('mB').classList.add('rec');
+        document.getElementById('rI').classList.add('active');
+        // FIX: Disable input instead of hiding it completely
+        const txt = document.getElementById('mTA');
+        txt.disabled = true;
+        txt.placeholder = "Recording...";
+        recI=setInterval(()=>{recS++;document.getElementById('rT').textContent=Math.floor(recS/60)+':'+(recS%60).toString().padStart(2,'0')},1000);
+        toast('Recording...')
+    }catch(e){toast('Failed');stream.getTracks().forEach(t=>t.stop())}
+}
+function stopR(){
+    if(mRec2?.state!=='inactive')mRec2.stop();
+    isRec=false;clearInterval(recI);
+    document.getElementById('mB').classList.remove('rec');
+    document.getElementById('rI').classList.remove('active');
+    // FIX: Re-enable input
+    const txt = document.getElementById('mTA');
+    txt.disabled = false;
+    txt.placeholder = "Message likho...";
+    txt.focus();
+}
 
 async function startCall(){if(!actChat)return;const stream=await getMic();if(!stream)return;const pid=C[actChat]?.peerId;if(!pid){toast('No peer');return}locS=stream;playDial();callConn=myPeer.call(pid,stream);callConn.on('stream',rs=>{stopDial();const a=new Audio();a.srcObject=rs;a.play().catch(()=>{});document.getElementById('clSt').textContent='> CONNECTED';document.getElementById('wV').classList.remove('idle');document.getElementById('sigB').classList.remove('weak');startCT()});callConn.on('close',()=>endCall(true));const pn=C[actChat]?.name||'?';document.getElementById('clAv').textContent=pn.charAt(0).toUpperCase();document.getElementById('clNm').textContent=pn;document.getElementById('clSt').textContent='> RINGING...';document.getElementById('clTm').textContent='00:00';document.getElementById('wV').classList.add('idle');document.getElementById('sigB').classList.add('weak');document.getElementById('clScr').classList.add('active')}
 async function accInc(){document.getElementById('incP').classList.remove('active');stopRing();if(!incCall)return;const stream=await getMic();if(!stream){rejInc();return}locS=stream;incCall.answer(stream);callConn=incCall;callConn.on('stream',rs=>{const a=new Audio();a.srcObject=rs;a.play().catch(()=>{});document.getElementById('clSt').textContent='> CONNECTED';document.getElementById('wV').classList.remove('idle');document.getElementById('sigB').classList.remove('weak');startCT()});callConn.on('close',()=>endCall(true));const pid=incCall.peer,p=fByPid(pid),pn=p?p.name:pid.substr(0,8);document.getElementById('clAv').textContent=pn.charAt(0).toUpperCase();document.getElementById('clNm').textContent=pn;document.getElementById('clSt').textContent='> CONNECTING...';document.getElementById('clTm').textContent='00:00';document.getElementById('wV').classList.add('idle');document.getElementById('sigB').classList.add('weak');document.getElementById('clScr').classList.add('active')}
